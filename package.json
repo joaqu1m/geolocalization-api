@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "browser-env": "^3.3.0"
+  }
+}
