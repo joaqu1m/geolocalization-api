@@ -1,0 +1,66 @@
+<html>
+  <head> 
+    <title>Add Map</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style>
+        /* Set the size of the div element that contains the map */
+#map {
+  height: 400px;
+  /* The height is 400 pixels */
+  width: 100%;
+  /* The width is the width of the web page */
+}
+    </style>
+  </head>
+  <body>
+    <h3>My Google Maps Demo</h3>
+    <!--The div element for the map -->
+    <div id="map"></div>
+
+    <!-- 
+     The `defer` attribute causes the callback to execute after the full HTML
+     document has been parsed. For non-blocking uses, avoiding race conditions,
+     and consistent behavior across browsers, consider loading using Promises
+     with https://www.npmjs.com/package/@googlemaps/js-api-loader.
+    -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&v=weekly"
+      defer
+    ></script>
+  </body>
+</html>
+<script>
+    // Initialize and add the map
+function initMap() {
+  // The location of Uluru
+  const uluru = { lat: -23.5581474, lng: -46.6615321};
+  const uluru2 = { lat: 80.5581474, lng: 66.6615321};
+  const uluru3 = { lat: 20.5581474, lng: 96.6615321};
+  distancia = (uluru.lat + uluru2.lat) / 2
+  distancia2 = (uluru.lng + uluru2.lng) / 2
+  const uluru4 = { lat: distancia, lng: distancia2 }
+  console.log(uluru)
+  console.log(uluru2)
+  console.log(`${distancia}, ${distancia2}`)
+  // The map, centered at Uluru
+  const map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 2,
+    center: uluru,
+  });
+  // The marker, positioned at Uluru
+  const marker1 = new google.maps.Marker({
+    position: uluru,
+    map: map,
+  });
+  const marker2 = new google.maps.Marker({
+    position: uluru2,
+    map: map,
+  });
+  const marker4 = new google.maps.Marker({
+    position: uluru4,
+    map: map,
+  });
+}
+
+window.initMap = initMap;
+</script>
