@@ -1,7 +1,6 @@
 <html>
   <head> 
     <title>Add Map</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <style>
         /* Set the size of the div element that contains the map */
 #map {
@@ -23,10 +22,7 @@
      and consistent behavior across browsers, consider loading using Promises
      with https://www.npmjs.com/package/@googlemaps/js-api-loader.
     -->
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&v=weekly"
-      defer
-    ></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&v=weekly" defer></script>
   </body>
 </html>
 <script>
@@ -35,7 +31,6 @@ function initMap() {
   // The location of Uluru
   const uluru = { lat: -23.5581474, lng: -46.6615321};
   const uluru2 = { lat: 80.5581474, lng: 66.6615321};
-  const uluru3 = { lat: 20.5581474, lng: 96.6615321};
   distancia = (uluru.lat + uluru2.lat) / 2
   distancia2 = (uluru.lng + uluru2.lng) / 2
   const uluru4 = { lat: distancia, lng: distancia2 }
@@ -56,11 +51,13 @@ function initMap() {
     position: uluru2,
     map: map,
   });
+  const marker3 = new google.maps.Marker({
+    position: {lat: 20.5581474, lng: 96.6615321},
+    map: map,
+  });
   const marker4 = new google.maps.Marker({
     position: uluru4,
     map: map,
   });
 }
-
-window.initMap = initMap;
 </script>
