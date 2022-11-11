@@ -4,37 +4,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&v=weekly" defer></script>
     <title>Document</title>
 </head>
 <body>
     <button onclick="getLocation()">começar</button>
     <p id="textoCordenadas"></p>
-    <p id="mapa" style="height: 300px; width: 300px;">API Google Maps vem aqui</p>
 </body>
 </html>
 <script>
     function getLocation() {
         if (navigator.geolocation) {
-            //navigator.geolocation.watchPosition(showPosition);
             navigator.geolocation.getCurrentPosition(showPosition);
         } else {
             textoCordenadas.innerHTML = "Geolocation is not supported by this browser.";
         }
     }
     function showPosition(position) {
-        textoCordenadas.innerHTML = "Latitude: " + position.coords.latitude + 
-        "<br>Longitude: " + position.coords.longitude;
-    }
-    var a = []
-    function initMap() {
-        const map = new google.maps.Map(mapa, {
-            zoom: 2,
-            center: {lat: 0, lng: 0},
-        })
-        new google.maps.Marker({
-            position: {lat: -23.5581474, lng: -46.6615321},
-            map: map,
-        })
+        textoCordenadas.innerHTML = `Latitude: ${position.coords.latitude}<br>Longitude: ${position.coords.longitude}`
     }
 </script>
