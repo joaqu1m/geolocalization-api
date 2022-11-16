@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localGet</title>
+</head>
+
+<body>
+    <p id="textoCordenadas"></p>
+    <button onclick="enviar()">Mandar ao node?</button>
+</body>
+
+</html>
+<script>
+    var lat = 0
+    var lng = 0
+    var nomeServer = 0
+    var lng = 0
+    function enviarDados(position) {
+        textoCordenadas.innerHTML = `Latitude: ${position.coords.latitude}<br>Longitude: ${position.coords.longitude}`
+        lat = position.coords.latitude
+        lng = position.coords.longitude
+    }
+    navigator.geolocation.getCurrentPosition(enviarDados)
+
+    function enviar() {
+        var nomeVar = lat
+        var emailVar = lng
+        var telVar = 2
+        var senhaVar = "z"
+
+        fetch("/usuarios/cadastrar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                // crie um atributo que envia o valor coletado aqui
+                // Agora vá para o arquivo routes/usuario.js
+                nomeServer: nomeVar,
+                emailServer: emailVar,
+                telServer: telVar,
+                senhaServer: senhaVar
+            })
+        }).then(function (resposta) {
+            console.log("resposta: ", resposta)
+    
+            if (resposta.ok) {
+                console.log("Funcionou") 
+            } else {
+                console.log("ERRO: Houve um erro ao tentar realizar o cadastro!")
+            }
+        })
+    }
+</script>
