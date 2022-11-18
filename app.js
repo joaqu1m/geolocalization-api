@@ -6,6 +6,8 @@ var cors = require("cors")
 var path = require("path")
 var PORTA = process.env.AMBIENTE_PROCESSO == "local" ? 3333 : 8080
 
+console.log(`> bibliotecas importadas com sucesso`)
+
 var app = express()
 
 var usuarioRouter = require("./src/routes/rotas")
@@ -18,7 +20,8 @@ app.use(cors())
 
 app.use("/rotas", usuarioRouter)
 
+console.log(`> rotas definidas`)
+
 app.listen(PORTA, function () {
-    console.log(`Servidor do seu site já está rodando! Acesse o caminho a seguir para visualizar: http://localhost:${PORTA} \n
-    Você está rodando sua aplicação em Ambiente ${process.env.AMBIENTE_PROCESSO} \r\n`)
+    console.log(`> servidor do seu site já está rodando no endereço http://localhost:${PORTA} em ambiente ${process.env.AMBIENTE_PROCESSO}`)
 })

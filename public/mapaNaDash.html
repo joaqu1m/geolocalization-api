@@ -1,30 +1,75 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
+    <script>
+        carregarTotem = window.location.search
+        carregarTotem = carregarTotem.substring(1, carregarTotem.length)
+    </script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=iniciarMapa" defer></script>
-    <title>Document</title>
+    <title>Mapas | Dashboard</title>
 </head>
 <body>
-    <button onclick="iniciarMapa()">a</button>
-    <p id="mapa" style="height: 600px; width: 600px;"></p>
+    <a href="a.html?totem1">totem1</a>
+    <a href="a.html?totem2">totem2</a>
+    <a href="a.html?totem3">totem3</a>
+    <p id="idd"></p>
+    <p id="mapa" style="height: 400px; width: 600px;"></p>
 </body>
 </html>
 <script>
-    const a = [{lat:-23.5581474, lng:-46.6615321}, {lat:-23.2581474, lng:-44.9615321}, {lat:25.170145, lng:21.621094}, {lat:53.751959, lng:-70.136719}, {lat:67.206161, lng:146.777344}]
-    maiorDistancia = 0
-    for (i = 1; i < a.length; i++) {
-        if (a[0].lat >= a[i].lat) {deltaY = a[0].lat - a[i].lat} else {deltaY = a[i].lat - a[0].lat}
-        if (a[0].lng >= a[i].lng) {deltaX = a[0].lng - a[i].lng} else {deltaX = a[i].lng - a[0].lng}
-        distancia = ((deltaY**2) + (deltaX**2))**1/2
-        if (distancia > maiorDistancia) {
-            maiorDistancia = distancia
+    idd.innerHTML = carregarTotem
+
+    // Descobrir qual totem está sendo usado pelo URL, e então coletar os valores por SELECTs no banco. Valores mocados temporariamente
+    if (carregarTotem == "totem1") {
+        cords = [{lat:-23.5581474, lng:-46.6615321}, {lat:-23.2581474, lng:-44.9615321}]
+        console.log(cords)
+    } else if (carregarTotem == "totem2") {
+        cords = [{lat:25.170145, lng:21.621094}]
+        console.log(cords)
+    } else if (carregarTotem == "totem3") {
+        cords = [{lat:53.751959, lng:-70.136719}, {lat:67.206161, lng:146.777344}]
+        console.log(cords)
+    }
+
+    // Descubro o ponto mais à esquerda
+    esquerdaMax = cords[0]
+    for (i = 1; i < cords.length; i++) {
+        if (cords[i].lng < esquerdaMax.lng) {
+            esquerdaMax = cords[i]
         }
     }
-    console.log(`Maior distância: ${maiorDistancia}`)
-    if (maiorDistancia > 0) {
+    console.log(`Ponto mais a esquerda: ${esquerdaMax.lat} ${esquerdaMax.lng}`)
+
+    // Função que calcula a hipotenusa entre dois pontos
+    function hipotenusa(latitude, longitude, pegarCentro) {
+        maiorDistancia = 0
+        for (i = 0; i < cords.length; i++) {
+            if (latitude >= cords[i].lat) {deltaY = latitude - cords[i].lat} else {deltaY = cords[i].lat - latitude}
+            if (longitude >= cords[i].lng) {deltaX = longitude - cords[i].lng} else {deltaX = cords[i].lng - longitude}
+            distancia = ((deltaY**2) + (deltaX**2))**1/2
+            if (distancia > maiorDistancia) {
+                maiorDistancia = distancia
+                if (pegarCentro) {
+                    centroMapa = {lat: (esquerdaMax.lat + cords[i].lat) / 2, lng: (esquerdaMax.lng + cords[i].lng) / 2}
+                }
+            }
+        }
+    }
+
+    // Primeiro vou usar a hipotenusa para descobrir o ponto mais distante do ponto mais a esquerda, e então pego o centro dos dois
+    centroMapa = cords[0]
+    hipotenusa(esquerdaMax.lat, esquerdaMax.lng, true)
+    console.log(`Centro do mapa: lat${centroMapa.lat} lng${centroMapa.lng}`)
+
+    // Agora, sabendo o centro do mapa, vou usar o cálculo da hipotenusa para descorbrir qual a distância entre o centro e o ponto mais distante do meio
+    hipotenusa(centroMapa.lat, centroMapa.lng, false)
+    console.log(`Maior distância a partir do centro: ${maiorDistancia}`)
+
+    // Defino o zoom baseado na distância que eu acabei de coletar, o mapa não pode ser responsivo por esse motivo. Os valores teriam que mudar
+    if (maiorDistancia >= 0) {
         zoomMapa = 10
         if (maiorDistancia > 0.130) {
             zoomMapa = 9
@@ -40,18 +85,18 @@
         }
     }
 
+    // Inicio o mapa após todas as configurações e cálculos
     function iniciarMapa() {
         const map = new google.maps.Map(mapa, {
             zoom: zoomMapa,
-            center: a[0],
+            center: centroMapa,
         })
-        for (i = 0; i < a.length; i++) {
+        for (i = 0; i < cords.length; i++) {
             new google.maps.Marker({
-                position: a[i],
+                position: cords[i],
                 map: map,
-                icon: "./imagem.jpg",
+                icon: "./magem.jpg",
             })
         }
-        console.log(markers)
     }
 </script>

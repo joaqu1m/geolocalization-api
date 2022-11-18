@@ -3,28 +3,7 @@ var router = express.Router()
 var database = require("../database/config")
 
 // lembrando que router.get é select e router.post é insert
-router.get("/listar", function (req, res) {
-    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function listar()")
-    var instrucao = `SELECT * FROM Usuario`
-    console.log("Executando a instrução SQL: \n" + instrucao)
-    database.executar(instrucao)
-    .then(
-        function (resultado) {
-        if (resultado.length > 0) {
-            res.status(200).json(resultado)
-        } else {
-            res.status(204).send("Nenhum resultado encontrado!")
-        }
-    }).catch(
-        function (erro) {
-            console.log(erro)
-            console.log("Houve um erro ao realizar a consulta! Erro: ", erro.sqlMessage)
-            res.status(500).json(erro.sqlMessage)
-        }
-    )
-})
-
-router.post("/cadastrar", function (req, res) {
+router.post("/inserir", function (req, res) {
     var nome = req.body.nomeServer
     var email = req.body.emailServer
     var tel = req.body.telServer
@@ -58,6 +37,49 @@ router.post("/cadastrar", function (req, res) {
             }
         )
     }
+})
+
+router.get("/selecionar", function (req, res) {
+    var instrucao = `SELECT * FROM Usuario`
+    console.log("Executando a instrução SQL: \n" + instrucao)
+    database.executar(instrucao)
+    .then(
+        function (resultado) {
+        if (resultado.length > 0) {
+            res.status(200).json(resultado)
+        } else {
+            res.status(204).send("Nenhum resultado encontrado!")
+        }
+    }).catch(
+        function (erro) {
+            console.log(erro)
+            console.log("Houve um erro ao realizar a consulta! Erro: ", erro.sqlMessage)
+            res.status(500).json(erro.sqlMessage)
+        }
+    )
+})
+
+router.get("/selecionar/:valores", function (req, res) {
+    var valoresRecebidos = req.params.valores
+    console.log(valoresRecebidos)
+
+    var instrucao = `SELECT * FROM Usuario`
+    console.log("Executando a instrução SQL: \n" + instrucao)
+    database.executar(instrucao)
+    .then(
+        function (resultado) {
+        if (resultado.length > 0) {
+            res.status(200).json(resultado)
+        } else {
+            res.status(204).send("Nenhum resultado encontrado!")
+        }
+    }).catch(
+        function (erro) {
+            console.log(erro)
+            console.log("Houve um erro ao realizar a consulta! Erro: ", erro.sqlMessage)
+            res.status(500).json(erro.sqlMessage)
+        }
+    )
 })
 
 module.exports = router

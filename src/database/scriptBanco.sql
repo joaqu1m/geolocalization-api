@@ -1,5 +1,5 @@
-create database geolocal;
-use geolocal;
+create database geolocalization;
+use geolocalization;
 
 drop table Usuario;
 
