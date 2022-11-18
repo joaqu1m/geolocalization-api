@@ -11,7 +11,8 @@
     <button onclick="selecionar()">selecionar</button>
     <button onclick="selecionarComParametros()">selecionar com parametros</button>
     <button onclick="inserir()">inserir</button>
-    <p id="recebido"></p>
+    <button onclick="inserirAI()">inserir sabendo insert do auto_increment</button>
+    <p id="recebido" style="background-color: black; color: white;"></p>
 </body>
 </html>
 <script>
@@ -27,12 +28,13 @@
     navigator.geolocation.getCurrentPosition(enviarDados)
 
     function inserir() {
+        recebido.innerHTML = ""
         var nomeVar = lat
         var emailVar = lng
         var telVar = 2
         var senhaVar = "z"
 
-        fetch("/rotas/inserir", {
+        fetch("/query/inserir", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -44,17 +46,54 @@
                 telServer: telVar,
                 senhaServer: senhaVar
             })
+        }).then(function (response) {
+            if (response.ok) {
+                response.json().then(function (resposta) {
+                    if (resposta != null) {
+                        recebido.innerHTML = "Inserido com sucesso"
+                    }
+                })
+            }
+        })
+    }
+
+    function inserirAI() {
+        recebido.innerHTML = ""
+        var nomeVar = lat
+        var emailVar = lng
+        var telVar = 2
+        var senhaVar = "z"
+
+        fetch("/query/inserir", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                // crie variáveis que enviam os valores coletados aqui
+                nomeServer: nomeVar,
+                emailServer: emailVar,
+                telServer: telVar,
+                senhaServer: senhaVar
+            })
+        }).then(function (response) {
+            if (response.ok) {
+                response.json().then(function (resposta) {
+                    recebido.innerHTML = `Inserido com sucesso! id retornado do auto increment: ${resposta.insertId}`
+                })
+            }
         })
     }
 
     function selecionar() {
-        fetch("/rotas/selecionar", {
+        recebido.innerHTML = ""
+        fetch("/query/selecionar", {
             method: "GET"
         }).then(function (response) {
             if (response.ok) {
                 response.json().then(function (resposta) {
                     for (i = 0; i < resposta.length; i++) {
-                        console.log(resposta[i])
+                        recebido.innerHTML += `${JSON.stringify(resposta[i])} <br>`
                     }
                 })
             }
@@ -62,14 +101,15 @@
     }
 
     function selecionarComParametros() {
+        recebido.innerHTML = ""
         var valores = ["valores a enviar", "a", "b"]
-        fetch(`/rotas/selecionar/${valores}`, {
+        fetch(`/query/selecionar/${valores}`, {
             method: "GET"
         }).then(function (response) {
             if (response.ok) {
                 response.json().then(function (resposta) {
                     for (i = 0; i < resposta.length; i++) {
-                        console.log(resposta[i])
+                        recebido.innerHTML += `${JSON.stringify(resposta[i])} <br>`
                     }
                 })
             }

@@ -10,7 +10,7 @@ console.log(`> bibliotecas importadas com sucesso`)
 
 var app = express()
 
-var usuarioRouter = require("./src/routes/rotas")
+var usuarioRouter = require("./src/query")
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, "public")))
 
 app.use(cors())
 
-app.use("/rotas", usuarioRouter)
+app.use("/query", usuarioRouter)
 
 console.log(`> rotas definidas`)
 

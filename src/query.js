@@ -1,6 +1,6 @@
 var express = require("express")
 var router = express.Router()
-var database = require("../database/config")
+var database = require("./conexao")
 
 // lembrando que router.get é select e router.post é insert
 router.post("/inserir", function (req, res) {
