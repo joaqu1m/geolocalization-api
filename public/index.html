@@ -10,7 +10,8 @@
 
 <body>
     <p id="textoCordenadas"></p>
-    <button onclick="enviar()">Mandar ao node?</button>
+    <button onclick="enviar()">enviar</button>
+    <button onclick="receber()">receber</button>
 </body>
 
 </html>
@@ -32,27 +33,24 @@
         var telVar = 2
         var senhaVar = "z"
 
-        fetch("/usuarios/cadastrar", {
+        fetch("/rotas/cadastrar", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                // crie um atributo que envia o valor coletado aqui
-                // Agora vá para o arquivo routes/usuario.js
+                // crie variáveis que enviam os valores coletados aqui
                 nomeServer: nomeVar,
                 emailServer: emailVar,
                 telServer: telVar,
                 senhaServer: senhaVar
             })
-        }).then(function (resposta) {
-            console.log("resposta: ", resposta)
-    
-            if (resposta.ok) {
-                console.log("Funcionou") 
-            } else {
-                console.log("ERRO: Houve um erro ao tentar realizar o cadastro!")
-            }
+        })
+    }
+
+    function receber() {
+        fetch("/rotas/listar", {
+            method: "GET"
         })
     }
 </script>

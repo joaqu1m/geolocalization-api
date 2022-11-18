@@ -1,5 +1,5 @@
 {
-    "name": "api-log-cad",
+    "name": "geolocalitazion-api",
     "version": "1.0.0",
     "scripts": {
         "start": "node app.js"

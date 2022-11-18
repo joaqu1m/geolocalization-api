@@ -1,14 +1,14 @@
-create database APILOGCAD;
-use APILOGCAD;
+create database geolocal;
+use geolocal;
 
 drop table Usuario;
 
 create table Usuario (
 id int primary key auto_increment,
-nome varchar (30) not null,
-email varchar (30) not null unique,
-tel varchar (11) not null unique,
-senha varchar (20) not null
-)auto_increment=1;
+nome varchar (50),
+email varchar (50),
+tel varchar (50),
+senha varchar (50)
+);
 
 select * from Usuario;

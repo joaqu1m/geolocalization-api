@@ -3,10 +3,10 @@ var sql = require('mssql')
 
 // CONEXÃO DO SQL SERVER - AZURE (NUVEM)
 var sqlServerConfig = {
-    server: "SEU_SERVIDOR",
-    database: "SEU_BANCO_DE_DADOS",
-    user: "SEU_USUARIO",
-    password: "SUA_SENHA",
+    server: "dbekran.database.windows.net",
+    database: "dbeKran",
+    user: "eKranAdm",
+    password: "1sis@grupo6",
     pool: {
         max: 10,
         min: 0,
@@ -20,49 +20,48 @@ var sqlServerConfig = {
 // CONEXÃO DO MYSQL WORKBENCH (LOCAL)
 var mySqlConfig = {
     host: "localhost",
-    database: "APILOGCAD",
-    user: "aluno",
-    password: "sptech",
-};
+    database: "geolocal",
+    user: "root",
+    password: "#Gf50069451842",
+}
 
 function executar(instrucao) {
-    // VERIFICA A VARIÁVEL DE AMBIENTE SETADA EM app.js
-    if (process.env.AMBIENTE_PROCESSO == "producao") {
+    if (process.env.AMBIENTE_PROCESSO == "cloud") {
         return new Promise(function (resolve, reject) {
             sql.connect(sqlServerConfig).then(function () {
-                return sql.query(instrucao);
+                return sql.query(instrucao)
             }).then(function (resultados) {
-                console.log(resultados);
-                resolve(resultados.recordset);
+                console.log(resultados)
+                resolve(resultados.recordset)
             }).catch(function (erro) {
-                reject(erro);
-                console.log('ERRO: ', erro);
-            });
+                reject(erro)
+                console.log('ERRO: ', erro)
+            })
             sql.on('error', function (erro) {
-                return ("ERRO NO SQL SERVER (Azure): ", erro);
-            });
-        });
-    } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
+                return ("ERRO NO SQL SERVER (Azure): ", erro)
+            })
+        })
+    } else if (process.env.AMBIENTE_PROCESSO == "local") {
         return new Promise(function (resolve, reject) {
-            var conexao = mysql.createConnection(mySqlConfig);
-            conexao.connect();
+            var conexao = mysql.createConnection(mySqlConfig)
+            conexao.connect()
             conexao.query(instrucao, function (erro, resultados) {
-                conexao.end();
+                conexao.end()
                 if (erro) {
-                    reject(erro);
+                    reject(erro)
                 }
-                console.log(resultados);
-                resolve(resultados);
-            });
+                console.log(resultados)
+                resolve(resultados)
+            })
             conexao.on('error', function (erro) {
-                return ("ERRO NO MySQL WORKBENCH (Local): ", erro.sqlMessage);
-            });
-        });
+                return ("ERRO NO MySQL WORKBENCH (Local): ", erro.sqlMessage)
+            })
+        })
     } else {
         return new Promise(function (resolve, reject) {
-            console.log("\nO AMBIENTE (produção OU desenvolvimento) NÃO FOI DEFINIDO EM app.js\n");
+            console.log("\nO AMBIENTE (cloud OU local) NÃO FOI DEFINIDO EM app.js\n")
             reject("AMBIENTE NÃO CONFIGURADO EM app.js")
-        });
+        })
     }
 }
 
