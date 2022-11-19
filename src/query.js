@@ -1,85 +1,57 @@
 var express = require("express")
 var router = express.Router()
-var database = require("./conexao")
+var sql = require('mssql')
 
-// lembrando que router.get é select e router.post é insert
 router.post("/inserir", function (req, res) {
-    var nome = req.body.nomeServer
-    var email = req.body.emailServer
-    var tel = req.body.telServer
-    var senha = req.body.senhaServer
+    var lat = req.body.latitude
+    var lng = req.body.longitude
+    var dia = req.body.dia
+    var hora = req.body.hora
+    var fkTotem = req.body.fkTotem
 
-    // Faça as validações dos valores
-    if (nome == undefined) {
-        res.status(400).send("Seu nome está undefined!")
-    } else if (email == undefined) {
-        res.status(400).send("Seu email está undefined!")
-    } else if (tel == undefined) {
-        res.status(400).send("Seu telefone está undefined!")
-    } else if (senha == undefined) {
-            res.status(400).send("Sua senha está undefined!")
-    } else {
-        var instrucao = `INSERT INTO Usuario (nome, email, tel, senha) VALUES ('${nome}', '${email}', '${tel}', '${senha}')`
-        console.log("Executando a instrução SQL: \n" + instrucao)
-        database.executar(instrucao)
-        .then(
-            function (resultado) {
-                res.json(resultado)
-            }
-        ).catch(
-            function (erro) {
-                console.log(erro)
-                console.log(
-                    "\nHouve um erro ao realizar o cadastro! Erro: ",
-                    erro.sqlMessage
-                )
-                res.status(500).json(erro.sqlMessage)
-            }
-        )
-    }
-})
-
-router.get("/selecionar", function (req, res) {
-    var instrucao = `SELECT * FROM Usuario`
+    var instrucao = `INSERT INTO geolocalizationLeitura (latitude, longitude, dia, hora, fkTotem) VALUES ('${lat}', '${lng}', '${dia}', '${hora}', '${fkTotem}')`
     console.log("Executando a instrução SQL: \n" + instrucao)
-    database.executar(instrucao)
+
+    new Promise(function (resolve, reject) {
+        sql.connect({
+            server: "XXXXXXX.database.windows.net",
+            database: "db",
+            user: "user",
+            password: "password",
+            pool: {
+                max: 10,
+                min: 0,
+                idleTimeoutMillis: 30000
+            },
+            options: {
+                encrypt: true,
+            }
+        }).then(function () {
+            return sql.query(instrucao)
+        }).then(function (resultados) {
+            console.log(resultados)
+            resolve(resultados.recordset)
+        }).catch(function (erro) {
+            reject(erro)
+            console.log('ERRO: ', erro)
+        })
+        sql.on('error', function (erro) {
+            return ("ERRO NO SQL SERVER (Azure): ", erro)
+        })
+    })
     .then(
         function (resultado) {
-        if (resultado.length > 0) {
-            res.status(200).json(resultado)
-        } else {
-            res.status(204).send("Nenhum resultado encontrado!")
+            res.json(resultado)
         }
-    }).catch(
+    ).catch(
         function (erro) {
             console.log(erro)
-            console.log("Houve um erro ao realizar a consulta! Erro: ", erro.sqlMessage)
+            console.log(
+                "\nHouve um erro ao realizar o cadastro! Erro: ",
+                erro.sqlMessage
+            )
             res.status(500).json(erro.sqlMessage)
         }
     )
 })
-
-router.get("/selecionar/:valores", function (req, res) {
-    var valoresRecebidos = req.params.valores
-    console.log(valoresRecebidos)
-
-    var instrucao = `SELECT * FROM Usuario`
-    console.log("Executando a instrução SQL: \n" + instrucao)
-    database.executar(instrucao)
-    .then(
-        function (resultado) {
-        if (resultado.length > 0) {
-            res.status(200).json(resultado)
-        } else {
-            res.status(204).send("Nenhum resultado encontrado!")
-        }
-    }).catch(
-        function (erro) {
-            console.log(erro)
-            console.log("Houve um erro ao realizar a consulta! Erro: ", erro.sqlMessage)
-            res.status(500).json(erro.sqlMessage)
-        }
-    )
-})
-
 module.exports = router

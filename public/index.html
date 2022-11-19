@@ -7,32 +7,40 @@
     <title>localGet</title>
 </head>
 <body>
+    <h2>input</h2>
     <p id="textoCordenadas"></p>
-    <button onclick="selecionar()">selecionar</button>
-    <button onclick="selecionarComParametros()">selecionar com parametros</button>
-    <button onclick="inserir()">inserir</button>
-    <button onclick="inserirAI()">inserir sabendo insert do auto_increment</button>
+    <h2>output</h2>
     <p id="recebido" style="background-color: black; color: white;"></p>
 </body>
 </html>
 <script>
-    var lat = 0
-    var lng = 0
-    var nomeServer = 0
-    var lng = 0
     function enviarDados(position) {
         lat = position.coords.latitude
         lng = position.coords.longitude
         textoCordenadas.innerHTML = `Latitude: ${lat}<br>Longitude: ${lng}`
+        console.log("Nova inserção:")
+        console.log(`Latitude: ${lat} \nLongitude: ${lng}`)
+        inserir()
     }
-    navigator.geolocation.getCurrentPosition(enviarDados)
+    function repeticao() {
+        navigator.geolocation.getCurrentPosition(enviarDados)
+    }
+    setInterval(repeticao, 5000)
 
     function inserir() {
         recebido.innerHTML = ""
-        var nomeVar = lat
-        var emailVar = lng
-        var telVar = 2
-        var senhaVar = "z"
+        const date = new Date()
+        var dia = ""
+        var hora = ""
+        dateTime = [String(date.getMonth()+1), String(date.getDate()), String(date.getFullYear()), String(date.getHours()), String(date.getMinutes()), String(date.getSeconds())]
+        for (i = 0; i < 6; i++) {
+            if (i == 1 || i == 2) {dia += `/`} else if (i == 4 || i == 5) {hora += `:`}
+            if (dateTime[i].length < 2) {
+                if (i < 3) {dia += `0${dateTime[i]}`} else {hora += `0${dateTime[i]}`}
+            } else {
+                if (i < 3) {dia += dateTime[i]} else {hora += dateTime[i]}
+            }
+        }
 
         fetch("/query/inserir", {
             method: "POST",
@@ -40,79 +48,13 @@
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                // crie variáveis que enviam os valores coletados aqui
-                nomeServer: nomeVar,
-                emailServer: emailVar,
-                telServer: telVar,
-                senhaServer: senhaVar
+                latitude: lat,
+                longitude: lng,
+                dia: dia,
+                hora: hora,
+                fkTotem: 50000
             })
-        }).then(function (response) {
-            if (response.ok) {
-                response.json().then(function (resposta) {
-                    if (resposta != null) {
-                        recebido.innerHTML = "Inserido com sucesso"
-                    }
-                })
-            }
         })
-    }
-
-    function inserirAI() {
-        recebido.innerHTML = ""
-        var nomeVar = lat
-        var emailVar = lng
-        var telVar = 2
-        var senhaVar = "z"
-
-        fetch("/query/inserir", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                // crie variáveis que enviam os valores coletados aqui
-                nomeServer: nomeVar,
-                emailServer: emailVar,
-                telServer: telVar,
-                senhaServer: senhaVar
-            })
-        }).then(function (response) {
-            if (response.ok) {
-                response.json().then(function (resposta) {
-                    recebido.innerHTML = `Inserido com sucesso! id retornado do auto increment: ${resposta.insertId}`
-                })
-            }
-        })
-    }
-
-    function selecionar() {
-        recebido.innerHTML = ""
-        fetch("/query/selecionar", {
-            method: "GET"
-        }).then(function (response) {
-            if (response.ok) {
-                response.json().then(function (resposta) {
-                    for (i = 0; i < resposta.length; i++) {
-                        recebido.innerHTML += `${JSON.stringify(resposta[i])} <br>`
-                    }
-                })
-            }
-        })
-    }
-
-    function selecionarComParametros() {
-        recebido.innerHTML = ""
-        var valores = ["valores a enviar", "a", "b"]
-        fetch(`/query/selecionar/${valores}`, {
-            method: "GET"
-        }).then(function (response) {
-            if (response.ok) {
-                response.json().then(function (resposta) {
-                    for (i = 0; i < resposta.length; i++) {
-                        recebido.innerHTML += `${JSON.stringify(resposta[i])} <br>`
-                    }
-                })
-            }
-        })
+        recebido.innerHTML = "Inserido com sucesso!"
     }
 </script>

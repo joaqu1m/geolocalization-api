@@ -1,5 +1,5 @@
-process.env.AMBIENTE_PROCESSO = "local"
-//process.env.AMBIENTE_PROCESSO = "cloud"
+//process.env.AMBIENTE_PROCESSO = "local"
+process.env.AMBIENTE_PROCESSO = "cloud"
 
 var express = require("express")
 var cors = require("cors")
