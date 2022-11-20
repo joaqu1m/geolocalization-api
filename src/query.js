@@ -31,6 +31,7 @@ router.post("/inserir", function (req, res) {
         }).then(function (resultados) {
             console.log(resultados)
             resolve(resultados.recordset)
+        // TODO: Mandar esse erro lá pro HTML pra poder diferenciar o "acesso ao banco negado" do "erro no insert"
         }).catch(function (erro) {
             reject(erro)
             console.log('ERRO: ', erro)
@@ -47,7 +48,7 @@ router.post("/inserir", function (req, res) {
         function (erro) {
             console.log(erro)
             console.log(
-                "\nHouve um erro ao realizar o cadastro! Erro: ",
+                "\nHouve um erro no banco! Erro: ",
                 erro.sqlMessage
             )
             res.status(500).json(erro.sqlMessage)

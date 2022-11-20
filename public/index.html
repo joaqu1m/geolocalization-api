@@ -15,24 +15,16 @@
 </html>
 <script>
     function enviarDados(position) {
+        // TODO: Coletar "Precisão da coleta" de dentro do position
+        console.log(position)
         lat = position.coords.latitude
         lng = position.coords.longitude
-        textoCordenadas.innerHTML = `Latitude: ${lat}<br>Longitude: ${lng}`
-        console.log("Nova inserção:")
-        console.log(`Latitude: ${lat} \nLongitude: ${lng}`)
-        inserir()
-    }
-    function repeticao() {
-        navigator.geolocation.getCurrentPosition(enviarDados)
-    }
-    setInterval(repeticao, 5000)
-
-    function inserir() {
-        recebido.innerHTML = ""
+        console.log("Nova inserção")
+        
         const date = new Date()
         var dia = ""
         var hora = ""
-        dateTime = [String(date.getMonth()+1), String(date.getDate()), String(date.getFullYear()), String(date.getHours()), String(date.getMinutes()), String(date.getSeconds())]
+        dateTime = [String(date.getDate()), String(date.getMonth()+1), String(date.getFullYear()), String(date.getHours()), String(date.getMinutes()), String(date.getSeconds())]
         for (i = 0; i < 6; i++) {
             if (i == 1 || i == 2) {dia += `/`} else if (i == 4 || i == 5) {hora += `:`}
             if (dateTime[i].length < 2) {
@@ -41,6 +33,8 @@
                 if (i < 3) {dia += dateTime[i]} else {hora += dateTime[i]}
             }
         }
+
+        textoCordenadas.innerHTML = `Latitude: ${lat}<br>Longitude: ${lng}<br>Data: ${dia}<br>Horário:${hora}`
 
         fetch("/query/inserir", {
             method: "POST",
@@ -54,7 +48,26 @@
                 hora: hora,
                 fkTotem: 50000
             })
+        }).then((response) => {
+            console.log(response)
+            if (response.ok) {
+                recebido.innerHTML = `Inserção concluída com sucesso! <br>lat:${lat}<br>lng${lng}<br>data:${dia}<br>horario:${hora}<br>totem:50000`
+            } else {
+                recebido.innerHTML = "Erro: Acesso ao banco negado"
+            }
         })
-        recebido.innerHTML = "Inserido com sucesso!"
+        .catch((response) => {
+            console.log(response)
+            recebido.innerHTML = "Erro: Aplicação Node.js"
+        })
     }
+    function erro(err) {
+        recebido.innerHTML = `Erro: Acesso a geolocalização negado. Código de erro ${err.code}`
+    }
+    function repeticao() {
+        navigator.geolocation.getCurrentPosition(enviarDados, erro, {
+            enableHighAccuracy: true
+        })
+    }
+    setInterval(repeticao, 5000)
 </script>
