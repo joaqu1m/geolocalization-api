@@ -7,18 +7,27 @@
     <title>localGet</title>
 </head>
 <body>
-    <h2>input</h2>
-    <p id="textoCordenadas"></p>
-    <h2>output</h2>
-    <p id="recebido" style="background-color: black; color: white;"></p>
+    <select id="escolher" onchange="comecar('normal')">
+        <option value="0">- Selecione o totem atual -</option>
+        <option value="50000">Totem 50000</option>
+        <option value="50001">Totem 50001</option>
+        <option value="50002">Totem 50002</option>
+    </select>
+    <br>
+    <button id="escolherBtn" onclick="comecar('simulado')">Alterar para versão de simulação</button>
+    <div id="aparecer" style="display: none;">
+        <h2>input</h2>
+        <p id="textoCordenadas"></p>
+        <h2>output</h2>
+        <p id="recebido" style="background-color: black; color: white;"></p>
+    </div>
 </body>
 </html>
 <script>
     function enviarDados(position) {
-        // TODO: Coletar "Precisão da coleta" de dentro do position
-        console.log(position)
         lat = position.coords.latitude
         lng = position.coords.longitude
+        acc = (position.coords.accuracy * 10**-3).toFixed(3)
         console.log("Nova inserção")
         
         const date = new Date()
@@ -34,7 +43,7 @@
             }
         }
 
-        textoCordenadas.innerHTML = `Latitude: ${lat}<br>Longitude: ${lng}<br>Data: ${dia}<br>Horário:${hora}`
+        textoCordenadas.innerHTML = `Latitude: ${lat}<br>Longitude: ${lng}<br>Precisão: ${acc}<br>Data: ${dia}<br>Horário: ${hora}<br>Totem: ${fkTotem}`
 
         fetch("/query/inserir", {
             method: "POST",
@@ -44,14 +53,15 @@
             body: JSON.stringify({
                 latitude: lat,
                 longitude: lng,
+                precisao: acc,
                 dia: dia,
                 hora: hora,
-                fkTotem: 50000
+                fkTotem: fkTotem
             })
         }).then((response) => {
             console.log(response)
             if (response.ok) {
-                recebido.innerHTML = `Inserção concluída com sucesso! <br>lat:${lat}<br>lng${lng}<br>data:${dia}<br>horario:${hora}<br>totem:50000`
+                recebido.innerHTML = `Inserção concluída com sucesso! <br>lat:${lat}<br>precisao:${acc}<br>lng${lng}<br>data:${dia}<br>horario:${hora}<br>totem:${fkTotem}`
             } else {
                 recebido.innerHTML = "Erro: Acesso ao banco negado"
             }
@@ -64,10 +74,23 @@
     function erro(err) {
         recebido.innerHTML = `Erro: Acesso a geolocalização negado. Código de erro ${err.code}`
     }
-    function repeticao() {
-        navigator.geolocation.getCurrentPosition(enviarDados, erro, {
-            enableHighAccuracy: true
-        })
+    function repetir() {
+        if (modoRpt == 'simulado') {if (fkTotem == 50000) {fkTotem = 50001} else if (fkTotem == 50001) {fkTotem = 50002} else if (fkTotem == 50002) {fkTotem = 50000} else {fkTotem = 50000}}
+        navigator.geolocation.getCurrentPosition(enviarDados, erro)
     }
-    setInterval(repeticao, 5000)
+
+    function comecar(modo) {
+        if (modo == 'normal') {
+            if (escolher.value == 0) return
+            modoRpt = 'normal'
+            fkTotem = escolher.value
+        } else if (modo == 'simulado') {
+            modoRpt = 'simulado'
+            fkTotem = 50002
+        }
+        escolher.style.display = "none"
+        escolherBtn.style.display = "none"
+        aparecer.style.display = "block"
+        setInterval(repetir, 5000)
+    }
 </script>

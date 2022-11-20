@@ -5,11 +5,12 @@ var sql = require('mssql')
 router.post("/inserir", function (req, res) {
     var lat = req.body.latitude
     var lng = req.body.longitude
+    var precisao = req.body.precisao
     var dia = req.body.dia
     var hora = req.body.hora
     var fkTotem = req.body.fkTotem
 
-    var instrucao = `INSERT INTO geolocalizationLeitura (latitude, longitude, dia, hora, fkTotem) VALUES ('${lat}', '${lng}', '${dia}', '${hora}', '${fkTotem}')`
+    var instrucao = `INSERT INTO geolocalizationLeitura (latitude, longitude, precisao, dia, hora, fkTotem) VALUES ('${lat}', '${lng}', '${precisao}', '${dia}', '${hora}', '${fkTotem}')`
     console.log("Executando a instrução SQL: \n" + instrucao)
 
     new Promise(function (resolve, reject) {
