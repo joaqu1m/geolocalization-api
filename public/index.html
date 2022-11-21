@@ -24,7 +24,15 @@
     function enviarDados(position) {
         lat = position.coords.latitude
         lng = position.coords.longitude
-        acc = (position.coords.accuracy * 10**-3).toFixed(3)
+        acc = Number((position.coords.accuracy * 10**-3).toFixed(3))
+        if (modoRpt == 'simulado' && fkTotem != totensDisponiveis[0]) {
+            lat += Math.floor((Math.random() * 20) - 10) / 100
+            lng += Math.floor((Math.random() * 20) - 10) / 100
+            acc += Math.floor((Math.random() * 300) - 150) / 1000
+            lat = lat.toFixed(7)
+            lng = lng.toFixed(7)
+            acc = acc.toFixed(3)
+        }
         console.log("Nova inserção")
         
         const date = new Date()
