@@ -7,14 +7,11 @@
     <title>localGet</title>
 </head>
 <body>
-    <select id="escolher" onchange="comecar('normal')">
+    <select id="escolher" onchange="comecar('normal')" style="display: none;">
         <option value="0">- Selecione o totem atual -</option>
-        <option value="50000">Totem 50000</option>
-        <option value="50001">Totem 50001</option>
-        <option value="50002">Totem 50002</option>
     </select>
     <br>
-    <button id="escolherBtn" onclick="comecar('simulado')">Alterar para versão de simulação</button>
+    <button id="escolherBtn" onclick="comecar('simulado')" style="display: none;">Alterar para versão de simulação</button>
     <div id="aparecer" style="display: none;">
         <h2>input</h2>
         <p id="textoCordenadas"></p>
@@ -75,7 +72,12 @@
         recebido.innerHTML = `Erro: Acesso a geolocalização negado. Código de erro ${err.code}`
     }
     function repetir() {
-        if (modoRpt == 'simulado') {if (fkTotem == 50000) {fkTotem = 50001} else if (fkTotem == 50001) {fkTotem = 50002} else if (fkTotem == 50002) {fkTotem = 50000} else {fkTotem = 50000}}
+        if (modoRpt == 'simulado') {
+            fkTotem++
+            if (fkTotem > totensDisponiveis[totensDisponiveis.length-1]) {
+                fkTotem = totensDisponiveis[0]
+            }
+        }
         navigator.geolocation.getCurrentPosition(enviarDados, erro)
     }
 
@@ -86,11 +88,28 @@
             fkTotem = escolher.value
         } else if (modo == 'simulado') {
             modoRpt = 'simulado'
-            fkTotem = 50002
+            fkTotem = totensDisponiveis[totensDisponiveis.length-1]
         }
         escolher.style.display = "none"
         escolherBtn.style.display = "none"
         aparecer.style.display = "block"
         setInterval(repetir, 5000)
     }
+
+    totensDisponiveis = []
+    fetch("/query/selecionar", {
+        method: "GET"
+    })
+    .then(function (response) {
+        if (response.ok) {
+            response.json().then(function (resposta) {
+                for (i = 0; i < resposta.length; i++) {
+                    totensDisponiveis.push(resposta[i].fkTotem)
+                    escolher.innerHTML += `<option value="${resposta[i].fkTotem}">Totem ${resposta[i].fkTotem}</option>`
+                }
+                escolher.style.display = "block"
+                escolherBtn.style.display = "block"
+            })
+        }
+    })
 </script>
