@@ -71,7 +71,6 @@ function conexaoBanco(instrucao) {
             console.log(resultados)
             resolve(resultados.recordset)
         }).catch(function (erro) {
-            // TODO: Mandar esse erro lá pro HTML pra poder diferenciar o "acesso ao banco negado" do "erro no insert"
             reject(erro)
             console.log('ERRO: ', erro)
         })

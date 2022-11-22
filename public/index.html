@@ -68,7 +68,7 @@
             if (response.ok) {
                 recebido.innerHTML = `Inserção concluída com sucesso! <br>lat:${lat}<br>precisao:${acc}<br>lng${lng}<br>data:${dia}<br>horario:${hora}<br>totem:${fkTotem}`
             } else {
-                recebido.innerHTML = "Erro: Acesso ao banco negado"
+                recebido.innerHTML = "Erro: Servidor SQLServer"
             }
         })
         .catch((response) => {

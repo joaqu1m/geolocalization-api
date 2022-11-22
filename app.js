@@ -1,10 +1,6 @@
-//process.env.AMBIENTE_PROCESSO = "local"
-process.env.AMBIENTE_PROCESSO = "cloud"
-
 var express = require("express")
 var cors = require("cors")
 var path = require("path")
-var PORTA = process.env.AMBIENTE_PROCESSO == "local" ? 3333 : 8080
 
 console.log(`> bibliotecas importadas com sucesso`)
 
@@ -22,6 +18,6 @@ app.use("/query", usuarioRouter)
 
 console.log(`> rotas definidas`)
 
-app.listen(PORTA, function () {
-    console.log(`> servidor do seu site já está rodando no endereço http://localhost:${PORTA} em ambiente ${process.env.AMBIENTE_PROCESSO}`)
+app.listen(8080, function () {
+    console.log(`> servidor do seu site já está rodando no endereço http://localhost:8080 em ambiente ${process.env.AMBIENTE_PROCESSO}`)
 })
